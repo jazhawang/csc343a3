@@ -1,4 +1,3 @@
-
 /*
     For each dive category from open water, cave, or 
     beyond 30 meters, list the number of dive sites that
@@ -7,33 +6,15 @@
     groups for that type of dive. 
 */
 
-DROP VIEW IF EXISTS OpenDiveSites CASCADE;
-CREATE VIEW OpenDiveSites AS
-    SELECT id as sid, 'open' as diveType 
-    FROM dsDiveTypes
-    WHERE dsDiveTypes.open=1;
+DROP VIEW IF EXISTS q1 CASCADE;
 
-DROP VIEW IF EXISTS CaveDiveSites CASCADE;
-CREATE VIEW OpenDiveSites AS
-    SELECT id as sid, 'cave' as diveType 
-    FROM dsDiveTypes
-    WHERE dsDiveTypes.cave=1;
-
-DROP VIEW IF EXISTS DeepDiveSites CASCADE;
-CREATE VIEW OpenDiveSites AS
-    SELECT id as sid, 'deep' as diveType 
-    FROM dsDiveTypes
-    WHERE dsDiveTypes.deep=1;
-
-
-DROP VIEW IF EXISTS AllDiveSites CASCADE;
-CREATE VIEW AllDiveSites AS 
-    SELECT * 
-    FROM CaveDiveSites UNION OpenDiveSites UNION DeepDiveSites;
-
-SELECT diveType, count(*) as num FROM 
+CREATE VIEW q1 AS
+SELECT dsDiveTypes.diveType as diveType, count(*) AS num FROM 
 DiveSites 
-    JOIN MonitorPrivilege ON (DiveSites.id=MonitorPrivilege.siteID)
-    JOIN MonitorPricing ON (MonitorPricing.mID=MonitorPricing.mID)
-    JOIN AllDiveSites ON (AllDiveSites.sid=DiveSites.id)
-GROUP BY diveType
+    -- determine if monitor has the privilege to book at the divesite
+    JOIN MonitorPrivilege ON (DiveSites.id=MonitorPrivilege.siteID) 
+    -- determine if the monitor actually offers the diveType
+    JOIN MonitorPricing ON (MonitorPricing.mID=MonitorPricing.mID) 
+    -- make sure that the divetype is supported at the divesite
+    JOIN dsDiveTypes ON (dsDiveTypes.sID=DiveSites.id) 
+GROUP BY dsDiveTypes.diveType;

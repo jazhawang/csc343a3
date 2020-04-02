@@ -1,19 +1,26 @@
 
 /* Schema for CSC343 A3 */
-
 drop schema if exists wetworldschema cascade;
 create schema wetworldschema;
 set search_path to wetworldschema;
 
-
-/*
-  Types for fixed domain specific information
-*/
+/* Types for fixed domain specific information */
 CREATE TYPE certification AS ENUM ('NAUI', 'CMAS', 'PADI');
 CREATE TYPE diveType AS ENUM('open', 'cave', 'deep');
 CREATE TYPE diveTime AS ENUM('morning', 'afternoon', 'night');
 CREATE TYPE service AS ENUM('video', 'snacks', 'hot_showers', 'towel_service');
 
+DROP TABLE IF EXISTS Diver CASCADE;
+DROP TABLE IF EXISTS DiveSites CASCADE;
+DROP TABLE IF EXISTS Monitor CASCADE;
+DROP TABLE IF EXISTS MonitorPricing CASCADE;
+DROP TABLE IF EXISTS MonitorCapacity CASCADE;
+DROP TABLE IF EXISTS MonitorPrivilege CASCADE;
+DROP TABLE IF EXISTS dsServices CASCADE;
+DROP TABLE IF EXISTS dsDiveTypes CASCADE;
+DROP TABLE IF EXISTS Booking CASCADE;
+DROP TABLE IF EXISTS BookingService CASCADE;
+DROP TABLE IF EXISTS BookingDiver CASCADE;
 
 /*
   Contains the crucial information about each diver
@@ -21,8 +28,18 @@ CREATE TYPE service AS ENUM('video', 'snacks', 'hot_showers', 'towel_service');
 CREATE Table Diver (
   id SERIAL PRIMARY KEY NOT NULL,
   age INT NOT NULL,
-  certification NOT NULL,
+  certification certification NOT NULL,
   email VARCHAR(255) NOT NULL
+);
+
+/*
+  Set of relations the express all necessary information
+  related to divesites.
+*/
+CREATE Table DiveSites(
+	id SERIAL PRIMARY KEY NOT NULL,
+	sID INT NOT NULL, -- TODO: why do we have this?
+	name VARCHAR(255) NOT NULL
 );
 
 /*
@@ -40,8 +57,8 @@ CREATE Table Monitor(
 */
 CREATE Table MonitorPricing(
   mID INT NOT NULL REFERENCES Monitor,
-  diveTime NOT NULL,
-  diveType NOT NULL,
+  diveTime diveTime NOT NULL,
+  diveType diveType NOT NULL,
   diveSite INT NOT NULL REFERENCES DiveSites,
   pricing INT NOT NULL,
   PRIMARY KEY (mID, diveTime, diveType)
@@ -53,7 +70,7 @@ CREATE Table MonitorPricing(
 */
 CREATE Table MonitorCapacity(
   mID INT NOT NULL REFERENCES Monitor,
-  diveType NOT NULL,
+  diveType diveType NOT NULL,
   group_size INT NOT NULL,
   PRIMARY KEY (mID, diveType)
 );
@@ -68,21 +85,11 @@ CREATE Table MonitorPrivilege(
 );
 
 /*
-  Set of relations the express all necessary information
-  related to divesites.
-*/
-CREATE Table DiveSites(
-	id SERIAL PRIMARY KEY NOT NULL,
-	sID INT NOT NULL, -- TODO: why do we have this?
-	name VARCHAR(255) NOT NULL
-);
-
-/*
   Represents if a divesite supports an optional service.
 */
 CREATE Table dsServices(
 	sID INT NOT NULL REFERENCES DiveSites,
-	service NOT NULL,
+	service service NOT NULL,
   price INT NOT NULL,
   PRIMARY KEY (sID, service)
 );
@@ -92,7 +99,7 @@ CREATE Table dsServices(
 */
 CREATE Table dsDiveTypes(
 	sID INT NOT NULL REFERENCES DiveSites,
-	diveType NOT NULL,
+	diveType diveType NOT NULL,
   -- piazza @689: the capacity is only dependent on diveType
   capacity INT NOT NULL,
   PRIMARY KEY (sID, diveType)
@@ -109,14 +116,14 @@ CREATE Table Booking(
    -- we're assuming there can only be one monitor
   monitorID INT NOT NULL REFERENCES Monitor,
   leadID INT NOT NULL REFERENCES Diver,
-  siteID INT NOT NULL REFERENCES DiveSite,
+  siteID INT NOT NULL REFERENCES DiveSites,
   monitorRating INT,
   -- we won't store credit card info like this irl.
   creditCardInfo VARCHAR(100) NOT NULL,
   emailAddress VARCHAR(100) NOT NULL, -- TODO: do we need this? The leadID should be a diver with an email.
   -- info about the dive type and time/date
-  diveTime NOT NULL,
-  diveType NOT NULL,
+  diveTime diveTime NOT NULL,
+  diveType diveType NOT NULL,
   bookingDate DATE NOT NULL
 );
 
@@ -126,7 +133,7 @@ CREATE Table Booking(
 */
 CREATE Table BookingService(
     bookingID INT NOT NULL,
-    service NOT NULL,
+    service service NOT NULL,
     PRIMARY KEY (bookingID, service)
 );
 

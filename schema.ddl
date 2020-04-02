@@ -52,7 +52,6 @@ CREATE Table Diver (
 */
 CREATE Table DiveSites(
 	id SERIAL PRIMARY KEY NOT NULL,
-  --sID INT NOT NULL, -- TODO: why do we have this?	
   name VARCHAR(255) NOT NULL,
   location VARCHAR(255) NOT NULL,
   diverFee INT NOT NULL, -- fee per diver

@@ -40,6 +40,7 @@ DROP TABLE IF EXISTS BookingDiver CASCADE; */
 */
 CREATE Table Diver (
   id SERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(100) NOT NULL,
   age INT NOT NULL,
   certification certification NOT NULL,
   email VARCHAR(255) NOT NULL
@@ -54,7 +55,8 @@ CREATE Table DiveSites(
   sID INT NOT NULL, -- TODO: why do we have this?	
   name VARCHAR(255) NOT NULL,
   location VARCHAR(255) NOT NULL,
-  diverFee INT NOT NULL -- fee per diver
+  diverFee INT NOT NULL, -- fee per diver
+  totalCapacity INT NOT NULL
 );
 
 /*
@@ -115,8 +117,8 @@ CREATE Table dsServices(
 CREATE Table dsDiveTypes(
 	sID INT NOT NULL REFERENCES DiveSites,
 	diveType diveType NOT NULL,
-  -- piazza @689: the capacity is only dependent on diveType
-  capacity INT NOT NULL,
+  -- piazza @689: the capacity is only dependent on diveType, not the dive time
+  capacity INT,
   PRIMARY KEY (sID, diveType)
 );
 

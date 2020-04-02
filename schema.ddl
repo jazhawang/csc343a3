@@ -51,7 +51,7 @@ CREATE Table Diver (
 */
 CREATE Table DiveSites(
 	id SERIAL PRIMARY KEY NOT NULL,
-	sID INT NOT NULL, -- TODO: why do we have this?
+  sID INT NOT NULL, -- TODO: why do we have this?	
   name VARCHAR(255) NOT NULL,
   location VARCHAR(255) NOT NULL,
   diverFee INT NOT NULL -- fee per diver
@@ -68,7 +68,7 @@ CREATE Table Monitor(
 /*
   The pricing for each Monitor depending on certain conditions.
 	From handout, we know that the pricing depends time of day, 
-  divetype and monitor.
+  divetype, divesite, and monitor.
 */
 CREATE Table MonitorPricing(
   mID INT NOT NULL REFERENCES Monitor,
@@ -76,7 +76,7 @@ CREATE Table MonitorPricing(
   diveType diveType NOT NULL,
   diveSite INT NOT NULL REFERENCES DiveSites,
   pricing INT NOT NULL,
-  PRIMARY KEY (mID, diveTime, diveType)
+  PRIMARY KEY (mID, diveTime, diveType, diveSite)
 );
 
 /*

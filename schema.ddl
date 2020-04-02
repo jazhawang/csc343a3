@@ -18,7 +18,7 @@ CREATE TYPE service AS ENUM(
   'fins',
   'wrist_mounted_computer'
   );
-
+/* 
 DROP TABLE IF EXISTS Diver CASCADE;
 DROP TABLE IF EXISTS DiveSites CASCADE;
 DROP TABLE IF EXISTS Monitor CASCADE;
@@ -29,7 +29,7 @@ DROP TABLE IF EXISTS dsServices CASCADE;
 DROP TABLE IF EXISTS dsDiveTypes CASCADE;
 DROP TABLE IF EXISTS Booking CASCADE;
 DROP TABLE IF EXISTS BookingService CASCADE;
-DROP TABLE IF EXISTS BookingDiver CASCADE;
+DROP TABLE IF EXISTS BookingDiver CASCADE; */
 
 /*
   Contains the crucial information about each diver

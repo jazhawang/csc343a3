@@ -1,5 +1,8 @@
 
-/* Schema for CSC343 A3 */
+/* Schema for CSC343 A3 
+
+  All monetary values are in cents.
+*/
 drop schema if exists wetworldschema cascade;
 create schema wetworldschema;
 set search_path to wetworldschema;
@@ -31,6 +34,7 @@ DROP TABLE IF EXISTS Booking CASCADE;
 DROP TABLE IF EXISTS BookingService CASCADE;
 DROP TABLE IF EXISTS BookingDiver CASCADE; */
 
+
 /*
   Contains the crucial information about each diver
 */
@@ -48,7 +52,9 @@ CREATE Table Diver (
 CREATE Table DiveSites(
 	id SERIAL PRIMARY KEY NOT NULL,
 	sID INT NOT NULL, -- TODO: why do we have this?
-	name VARCHAR(255) NOT NULL
+  name VARCHAR(255) NOT NULL,
+  location VARCHAR(255) NOT NULL,
+  diverFee INT NOT NULL -- fee per diver
 );
 
 /*

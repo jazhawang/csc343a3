@@ -32,6 +32,8 @@ CREATE VIEW DiveSiteLessThanHalfFull AS
 SELECT id as divesite FROM DiveSites
 EXCEPT SELECT * FROM DiveSiteMoreThanHalfFull;
 
+
+-- TODO: Edit this so it account for the divers fee
 DROP VIEW IF EXISTS BookingPrices CASCADE;
 CREATE VIEW BookingPrices AS
 SELECT Booking.id as booking,

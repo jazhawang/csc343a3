@@ -1,9 +1,13 @@
+
+/* Schema for CSC343 A3 */
+
 drop schema if exists wetworldschema cascade;
 create schema wetworldschema;
 set search_path to wetworldschema;
 
+
 /*
-	Declaring and expressing the constraints for which there are fixed values
+  Types for fixed domain specific information
 */
 CREATE TYPE certification AS ENUM ('NAUI', 'CMAS', 'PADI');
 CREATE TYPE diveType AS ENUM('open', 'cave', 'deep');
@@ -12,7 +16,7 @@ CREATE TYPE service AS ENUM('video', 'snacks', 'hot_showers', 'towel_service');
 
 
 /*
-Containing the crucial information about each diver
+  Contains the crucial information about each diver
 */
 CREATE Table Diver (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -22,26 +26,30 @@ CREATE Table Diver (
 );
 
 /*
-	Table to represent monitor status for divers
+	Table to represent monitor status for divers.
+  Inclusion in this table means the diver with dID is a monitor
 */
 CREATE Table Monitor(
   dID SERIAL PRIMARY KEY NOT NULL REFERENCES Diver
 );
 
 /*
-	From handout, we know that Pricing depends time of day, divetype and monitor
+  The pricing for each Monitor depending on certain conditions.
+	From handout, we know that the pricing depends time of day, 
+  divetype and monitor.
 */
 CREATE Table MonitorPricing(
   mID INT NOT NULL REFERENCES Monitor,
   diveTime NOT NULL,
   diveType NOT NULL,
   diveSite INT NOT NULL REFERENCES DiveSites,
-  pricing INT NOT NULL
+  pricing INT NOT NULL,
   PRIMARY KEY (mID, diveTime, diveType)
 );
 
 /*
-	From handout, we know that Capacity depends on the monitor and divetype
+  The max number of diver a monitor can supervise during a dive of diveType.
+	From handout, we know that capacity depends on the monitor and divetype
 */
 CREATE Table MonitorCapacity(
   mID INT NOT NULL REFERENCES Monitor,
@@ -50,60 +58,72 @@ CREATE Table MonitorCapacity(
   PRIMARY KEY (mID, diveType)
 );
 
+/* 
+  Monitor mID has booking privilege for divesite siteID.
+*/
 CREATE Table MonitorPrivilege(
   mID INT NOT NULL REFERENCES Monitor,
   siteID INT NOT NULL REFERENCES DiveSites,
   PRIMARY KEY (mID, siteID)
 );
 
-
 /*
-Set of relaions the express all necessary information related to divesites
+  Set of relations the express all necessary information
+  related to divesites.
 */
 CREATE Table DiveSites(
 	id SERIAL PRIMARY KEY NOT NULL,
-	sID INT NOT NULL,
+	sID INT NOT NULL, -- TODO: why do we have this?
 	name VARCHAR(255) NOT NULL
 );
 
 /*
-represents if a divesite supports an optional service
+  Represents if a divesite supports an optional service.
 */
 CREATE Table dsServices(
 	sID INT NOT NULL REFERENCES DiveSites,
 	service NOT NULL,
-    price INT NOT NULL,
-    PRIMARY KEY (sID, service)
+  price INT NOT NULL,
+  PRIMARY KEY (sID, service)
 );
 
 /*
-represent if the divesite supports a diving type
+  Represent if the divesite supports a diving type.
 */
 CREATE Table dsDiveTypes(
 	sID INT NOT NULL REFERENCES DiveSites,
 	diveType NOT NULL,
-    capacity INT NOT NULL, /* piazza @689 */
-    PRIMARY KEY (sID, diveType)
+  -- piazza @689: the capacity is only dependent on diveType
+  capacity INT NOT NULL,
+  PRIMARY KEY (sID, diveType)
 );
 
 /*
-TODO: How to deal with bookings. Do we need to include every single possible
-diver that is on each of the bookings?
-What does each booking tuple look like? Maybe start from there
+  Represents the base Booking information. This is a pretty big table,
+  but everything here only functionally depends on the booking id and 
+  does not have many duplicated, so we included a lot of information 
+  in this table.
 */
 CREATE Table Booking(
   id SERIAL PRIMARY KEY NOT NULL,
-  monitorID INT NOT NULL REFERENCES Monitor, -- I'm assuming that there can only be one monitor
+   -- we're assuming there can only be one monitor
+  monitorID INT NOT NULL REFERENCES Monitor,
   leadID INT NOT NULL REFERENCES Diver,
   siteID INT NOT NULL REFERENCES DiveSite,
-  monitorRating INT
+  monitorRating INT,
+  -- we won't store credit card info like this irl.
   creditCardInfo VARCHAR(100) NOT NULL,
-  emailAddress VARCHAR(100) NOT NULL,
+  emailAddress VARCHAR(100) NOT NULL, -- TODO: do we need this? The leadID should be a diver with an email.
+  -- info about the dive type and time/date
   diveTime NOT NULL,
   diveType NOT NULL,
   bookingDate DATE NOT NULL
 );
 
+/* 
+  Represents if Booking bookingID has requested a certain optional 
+  service.
+*/
 CREATE Table BookingService(
     bookingID INT NOT NULL,
     service NOT NULL,
@@ -114,5 +134,6 @@ CREATE Table BookingService(
 CREATE Table BookingDiver(
   booking INT NOT NULL REFERENCES Booking,
   diver INT NOT NULL REFERENCES Diver,
-  rating INT
+  -- optional rating given by the diver. Can be null. We didn't want to make a table just for this.
+  rating INT 
 );

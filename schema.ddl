@@ -8,7 +8,16 @@ set search_path to wetworldschema;
 CREATE TYPE certification AS ENUM ('NAUI', 'CMAS', 'PADI');
 CREATE TYPE diveType AS ENUM('open', 'cave', 'deep');
 CREATE TYPE diveTime AS ENUM('morning', 'afternoon', 'night');
-CREATE TYPE service AS ENUM('video', 'snacks', 'hot_showers', 'towel_service');
+CREATE TYPE service AS ENUM(
+  'video', 
+  'snacks', 
+  'hot_showers', 
+  'towel_service', 
+  'masks',
+  'regulators',
+  'fins',
+  'wrist_mounted_computer'
+  );
 
 DROP TABLE IF EXISTS Diver CASCADE;
 DROP TABLE IF EXISTS DiveSites CASCADE;

@@ -33,11 +33,11 @@ SELECT id as divesite FROM DiveSites
 EXCEPT SELECT * FROM DiveSiteMoreThanHalfFull;
 
 
-DROP VIEW IF EXISTS BookingPricesServices CASCADE;
-CREATE VIEW BookingPricesServices AS
+DROP VIEW IF EXISTS BookingPricesMonitors CASCADE;
+CREATE VIEW BookingPricesMonitors AS
 SELECT Booking.id as booking,
        Booking.siteID as divesite,
-       MonitorPricing.pricing + sum(dsServices.price) as price
+       MonitorPricing.pricing as price
 FROM Booking 
     -- get the monitor's pricing
     JOIN MonitorPricing ON (
@@ -46,11 +46,18 @@ FROM Booking
         MonitorPricing.diveType=Booking.diveType and 
         MonitorPricing.diveSite=Booking.siteID
     )
-    -- get the extra services' pricing
-    JOIN BookingService ON (Booking.id=BookingService.bookingID)
-    JOIN dsServices ON (BookingService.service=dsServices.service)
 GROUP BY Booking.id, MonitorPricing.pricing;
 
+DROP VIEW IF EXISTS BookingPricesServices CASCADE;
+CREATE VIEW BookingPricesServices AS
+SELECT Booking.id as booking,
+       Booking.siteID as divesite,
+       SUM(dsServices.price) as price
+FROM Booking 
+     -- get the extra services' pricing
+    JOIN BookingService ON (Booking.id=BookingService.bookingID)
+    JOIN dsServices ON (BookingService.service=dsServices.service and dsServices.sID=Booking.siteID)
+GROUP BY Booking.id;
 
 DROP VIEW IF EXISTS BookingPricesDivers CASCADE;
 CREATE VIEW BookingPricesDivers AS
@@ -71,6 +78,8 @@ FROM (
     (SELECT * FROM BookingPricesDivers)
     UNION 
     (SELECT * FROM BookingPricesServices)
+    UNION 
+    (SELECT * FROM BookingPricesMonitors)
     ) allPrices
 GROUP BY allPrices.booking, allPrices.divesite;
 

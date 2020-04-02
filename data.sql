@@ -95,6 +95,12 @@ VALUES
     (6, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-23'),
     (7, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-24');
 
+
+INSERT INTO BookingService (bookingID, service)
+VALUES
+    (1, 'masks'),
+    (1, 'fins');
+
 INSERT INTO BookingDiver(booking, diver, rating)
 VALUES
     (1, 4, 2),

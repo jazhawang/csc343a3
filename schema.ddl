@@ -8,7 +8,7 @@ create schema wetworldschema;
 set search_path to wetworldschema;
 
 /* Types for fixed domain specific information */
-CREATE TYPE certification AS ENUM ('NAUI', 'CMAS', 'PADI');
+CREATE TYPE certification AS ENUM ('NAUI', 'CMAS', 'PADI', 'NA');
 CREATE TYPE diveType AS ENUM('open', 'cave', 'deep');
 CREATE TYPE diveTime AS ENUM('morning', 'afternoon', 'night');
 CREATE TYPE service AS ENUM(
@@ -52,11 +52,11 @@ CREATE Table Diver (
 */
 CREATE Table DiveSites(
 	id SERIAL PRIMARY KEY NOT NULL,
-  sID INT NOT NULL, -- TODO: why do we have this?	
+  --sID INT NOT NULL, -- TODO: why do we have this?	
   name VARCHAR(255) NOT NULL,
   location VARCHAR(255) NOT NULL,
   diverFee INT NOT NULL, -- fee per diver
-  totalCapacity INT NOT NULL
+  maxCapacity INT NOT NULL
 );
 
 /*
@@ -64,7 +64,8 @@ CREATE Table DiveSites(
   Inclusion in this table means the diver with dID is a monitor
 */
 CREATE Table Monitor(
-  dID SERIAL PRIMARY KEY NOT NULL REFERENCES Diver
+  dID SERIAL PRIMARY KEY NOT NULL REFERENCES Diver,
+  maxCapacity INT NOT NULL
 );
 
 /*
@@ -134,10 +135,9 @@ CREATE Table Booking(
   monitorID INT NOT NULL REFERENCES Monitor,
   leadID INT NOT NULL REFERENCES Diver,
   siteID INT NOT NULL REFERENCES DiveSites,
-  monitorRating INT,
   -- we won't store credit card info like this irl.
   creditCardInfo VARCHAR(100) NOT NULL,
-  emailAddress VARCHAR(100) NOT NULL, -- TODO: do we need this? The leadID should be a diver with an email.
+  --emailAddress VARCHAR(100) NOT NULL, -- TODO: do we need this? The leadID should be a diver with an email.
   -- info about the dive type and time/date
   diveTime diveTime NOT NULL,
   diveType diveType NOT NULL,

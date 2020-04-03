@@ -23,13 +23,13 @@ CREATE TYPE service AS ENUM(
   );
 /*
 DROP TABLE IF EXISTS Diver CASCADE;
-DROP TABLE IF EXISTS DiveSites CASCADE;
+DROP TABLE IF EXISTS DiveSite CASCADE;
 DROP TABLE IF EXISTS Monitor CASCADE;
 DROP TABLE IF EXISTS MonitorPricing CASCADE;
 DROP TABLE IF EXISTS MonitorCapacity CASCADE;
 DROP TABLE IF EXISTS MonitorPrivilege CASCADE;
-DROP TABLE IF EXISTS dsServices CASCADE;
-DROP TABLE IF EXISTS dsDiveTypes CASCADE;
+DROP TABLE IF EXISTS DiveSiteService CASCADE;
+DROP TABLE IF EXISTS DiveSiteDiveType CASCADE;
 DROP TABLE IF EXISTS Booking CASCADE;
 DROP TABLE IF EXISTS BookingService CASCADE;
 DROP TABLE IF EXISTS BookingDiver CASCADE; */
@@ -48,9 +48,9 @@ CREATE Table Diver (
 
 /*
   Set of relations the express all necessary information
-  related to divesites.
+  related to DiveSite.
 */
-CREATE Table DiveSites(
+CREATE Table DiveSite(
 	id SERIAL PRIMARY KEY NOT NULL,
   name VARCHAR(255) NOT NULL,
   location VARCHAR(255) NOT NULL,
@@ -76,7 +76,7 @@ CREATE Table MonitorPricing(
   mID INT NOT NULL REFERENCES Monitor,
   diveTime diveTime NOT NULL,
   diveType diveType NOT NULL,
-  diveSite INT NOT NULL REFERENCES DiveSites,
+  diveSite INT NOT NULL REFERENCES DiveSite,
   pricing INT NOT NULL,
   PRIMARY KEY (mID, diveTime, diveType, diveSite)
 );
@@ -97,15 +97,15 @@ CREATE Table MonitorCapacity(
 */
 CREATE Table MonitorPrivilege(
   mID INT NOT NULL REFERENCES Monitor,
-  siteID INT NOT NULL REFERENCES DiveSites,
+  siteID INT NOT NULL REFERENCES DiveSite,
   PRIMARY KEY (mID, siteID)
 );
 
 /*
   Represents if a divesite supports an optional service.
 */
-CREATE Table dsServices(
-	sID INT NOT NULL REFERENCES DiveSites,
+CREATE Table DiveSiteService(
+	sID INT NOT NULL REFERENCES DiveSite,
 	service service NOT NULL,
   price INT NOT NULL,
   PRIMARY KEY (sID, service)
@@ -114,8 +114,8 @@ CREATE Table dsServices(
 /*
   Represent if the divesite supports a diving type.
 */
-CREATE Table dsDiveTypes(
-	sID INT NOT NULL REFERENCES DiveSites,
+CREATE Table DiveSiteDiveType(
+	sID INT NOT NULL REFERENCES DiveSite,
 	diveType diveType NOT NULL,
   -- piazza @689: the capacity is only dependent on diveType, not the dive time
   capacity INT,
@@ -133,7 +133,7 @@ CREATE Table Booking(
    -- we're assuming there can only be one monitor
   monitorID INT NOT NULL REFERENCES Monitor,
   leadID INT NOT NULL REFERENCES Diver,
-  siteID INT NOT NULL REFERENCES DiveSites,
+  siteID INT NOT NULL REFERENCES DiveSite,
   -- we won't store credit card info like this irl.
   creditCardInfo VARCHAR(100) NOT NULL,  
   -- info about the dive type and time/date

@@ -27,13 +27,13 @@ SELECT Booking.siteID as divesite,
        Booking.bookingDate as dive_date,
        Booking.divetime as divetime,
        -- plus one for the monitors
-       (cast((sum(Booking.id)+1) as decimal)/DiveSites.maxCapacity) 
+       (cast((sum(Booking.id)+1) as decimal)/DiveSite.maxCapacity) 
            as occupancy_rate       
-FROM Booking JOIN DiveSites ON (Booking.siteID=DiveSites.id)
+FROM Booking JOIN DiveSite ON (Booking.siteID=DiveSite.id)
 GROUP BY Booking.diveTime, 
          Booking.siteID, 
          Booking.bookingDate,
-         DiveSites.id;
+         DiveSite.id;
 
 
 /* Now, we use DiveSiteOccupancyMinimal to find the occupancy
@@ -66,7 +66,7 @@ HAVING avg(occupancy_rate)>=0.5;
 /* Divesites which are less than half full on average. */
 DROP VIEW IF EXISTS DiveSiteLessThanHalfFull CASCADE;
 CREATE VIEW DiveSiteLessThanHalfFull AS
-SELECT id as divesite FROM DiveSites
+SELECT id as divesite FROM DiveSite
 EXCEPT SELECT * FROM DiveSiteMoreThanHalfFull;
 
 
@@ -94,13 +94,13 @@ DROP VIEW IF EXISTS BookingPricesServices CASCADE;
 CREATE VIEW BookingPricesServices AS
 SELECT Booking.id as booking,
        Booking.siteID as divesite,
-       SUM(dsServices.price) as price
+       SUM(DiveSiteService.price) as price
 FROM Booking 
      -- get the extra services' pricing
     JOIN BookingService ON (Booking.id=BookingService.bookingID)
-    JOIN dsServices ON (
-        BookingService.service=dsServices.service and
-        dsServices.sID=Booking.siteID
+    JOIN DiveSiteService ON (
+        BookingService.service=DiveSiteService.service and
+        DiveSiteService.sID=Booking.siteID
         )
 GROUP BY Booking.id;
 
@@ -110,11 +110,11 @@ DROP VIEW IF EXISTS BookingPricesDivers CASCADE;
 CREATE VIEW BookingPricesDivers AS
 SELECT Booking.id as booking,
        Booking.siteID as divesite,
-       count(BookingDiver.diver) * DiveSites.diverFee as price
+       count(BookingDiver.diver) * DiveSite.diverFee as price
 FROM Booking
     JOIN BookingDiver ON (Booking.id=BookingDiver.booking)
-    JOIN DiveSites ON (DiveSites.id=Booking.siteID)
-GROUP BY Booking.id, DiveSites.diverFee;
+    JOIN DiveSite ON (DiveSite.id=Booking.siteID)
+GROUP BY Booking.id, DiveSite.diverFee;
 
 /* Sum the three previous tables by booking.id to get the 
    total price of every booking. */

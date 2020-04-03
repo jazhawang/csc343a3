@@ -85,22 +85,22 @@ DROP VIEW IF EXISTS BookingPricesServices CASCADE;
 CREATE VIEW BookingPricesServices AS
 	SELECT Booking.id as booking,
 	       Booking.siteID as divesite,
-	       SUM(dsServices.price) as price
+	       SUM(DiveSiteService.price) as price
 	FROM Booking
 	     -- get the extra services' pricing
 	    JOIN BookingService ON (Booking.id=BookingService.bookingID)
-	    JOIN dsServices ON (BookingService.service=dsServices.service and dsServices.sID=Booking.siteID)
+	    JOIN DiveSiteService ON (BookingService.service=DiveSiteService.service and DiveSiteService.sID=Booking.siteID)
 	GROUP BY Booking.id;
 
 DROP VIEW IF EXISTS BookingPricesDivers CASCADE;
 CREATE VIEW BookingPricesDivers AS
 	SELECT Booking.id as booking,
 	       Booking.siteID as divesite,
-	       count(BookingDiver.diver) * DiveSites.diverFee as price
+	       count(BookingDiver.diver) * DiveSite.diverFee as price
 	FROM Booking
 	    JOIN BookingDiver ON (Booking.id=BookingDiver.booking)
-	    JOIN DiveSites ON (DiveSites.id=Booking.siteID)
-	GROUP BY Booking.id, DiveSites.diverFee;
+	    JOIN DiveSite ON (DiveSite.id=Booking.siteID)
+	GROUP BY Booking.id, DiveSite.diverFee;
 
 DROP VIEW IF EXISTS BookingPrices CASCADE;
 CREATE VIEW BookingPrices AS

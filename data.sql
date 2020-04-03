@@ -14,14 +14,14 @@
    representation.
 */
 
-INSERT INTO DiveSites (id, name, location, diverFee, maxCapacity)
+INSERT INTO DiveSite (id, name, location, diverFee, maxCapacity)
 VALUES
     (1, 'Bloody Bay Marine Park', 'Little Cayman', 1000, 10),
     (2, 'Widow Makers Cave', 'Montegro Bay', 2000, 15),
     (3, 'Crystal Bay', 'Crystal Bay', 1500, 10),
     (4, 'Batu Bolong', 'Batu Bolong', 1500, 10);
 
-INSERT INTO dsDiveTypes (sID, diveType, capacity)
+INSERT INTO DiveSiteDiveType (sID, diveType, capacity)
 VALUES
     (1, 'cave', 10),
     (2, 'open', 15),
@@ -32,7 +32,7 @@ VALUES
     (4, 'cave', 10),
     (4, 'deep', 10);
 
-INSERT INTO dsServices (sID, service, price)
+INSERT INTO DiveSiteService (sID, service, price)
 VALUES
     (1, 'masks', 500),
     (1, 'fins', 1000),

@@ -16,10 +16,10 @@ CREATE TABLE q1 (
 /* The answer to q1. We find all divesites/divetype combos with a 
    valid monitor (qualified and is offering services).  */
 INSERT INTO q1
-SELECT dsDiveTypes.diveType as diveType, count(*) AS num 
-FROM DiveSites 
+SELECT DiveSiteDiveType.diveType as diveType, count(*) AS num 
+FROM DiveSite 
     -- make sure that the divetype is supported at the divesite
-    JOIN dsDiveTypes ON (dsDiveTypes.sID=DiveSites.id)
+    JOIN DiveSiteDiveType ON (DiveSiteDiveType.sID=DiveSite.id)
     -- make sure that there is a qualified monitor and is offering
     -- to monitor the divesite
 WHERE EXISTS ( 
@@ -29,7 +29,7 @@ WHERE EXISTS (
             MonitorPricing.mID=MonitorPrivilege.mID and
             MonitorPricing.divesite=MonitorPrivilege.siteID
             ) 
-    WHERE MonitorPrivilege.siteID=DiveSites.id and 
-          MonitorPricing.diveType=dsDiveTypes.diveType
+    WHERE MonitorPrivilege.siteID=DiveSite.id and 
+          MonitorPricing.diveType=DiveSiteDiveType.diveType
 )
-GROUP BY dsDiveTypes.diveType;
+GROUP BY DiveSiteDiveType.diveType;

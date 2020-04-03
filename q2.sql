@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS q2 CASCADE;
 CREATE TABLE q2 (
 		monitorID INT NOT NULL,
 		avgFee INT NOT NULL,
-		emailAddress char not null
+		emailAddress varchar(255) not null
 );
 
 -- Do this for each of the views that define your intermediate steps.
@@ -62,7 +62,7 @@ DROP VIEW IF EXISTS goodMonitors CASCADE;
 CREATE VIEW goodMonitors AS
 	select distinct m.mID as mID, b.id as bID, d.email as email
 	from monitorSiteRatings as m, Booking as b, Diver as d
-	where NOT EXISTS (select * from badMonitors) and b.monitorID = m.mID and m.mID = d.id;
+	where mID NOT IN (select * from badMonitors) and b.monitorID = m.mID and m.mID = d.id;
 
 -- Computing booking prices for each booking
 

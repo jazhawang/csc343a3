@@ -4,7 +4,8 @@ DROP TABLE IF EXISTS q2 CASCADE;
 
 CREATE TABLE q2 (
 		monitorID INT NOT NULL,
-
+		avgFee INT NOT NULL,
+		emailAddress char not null
 );
 
 -- Do this for each of the views that define your intermediate steps.
@@ -59,12 +60,70 @@ CREATE VIEW badMonitors AS
 
 DROP VIEW IF EXISTS goodMonitors CASCADE;
 CREATE VIEW goodMonitors AS
-	select distinct m.monitorID
-	from monitorSiteRatings as m
-	where NOT EXISTS badMonitors;
+	select distinct m.monitorID as mID, b.id as bID, d.email as email
+	from monitorSiteRatings as m, Booking as b, Diver as d
+	where NOT EXISTS badMonitors and b.monitorID = m.id and m.id = d.id;
 
--- Find avg booking fee and email addresses accordingly
+-- Computing booking prices for each booking
 
+DROP VIEW IF EXISTS BookingPricesMonitors CASCADE;
+CREATE VIEW BookingPricesMonitors AS
+	SELECT Booking.id as booking,
+	       Booking.siteID as divesite,
+	       MonitorPricing.pricing as price
+	FROM Booking
+	    -- get the monitor's pricing
+	    JOIN MonitorPricing ON (
+	        MonitorPricing.mID=Booking.monitorID and
+	        MonitorPricing.diveTime=Booking.diveTime and
+	        MonitorPricing.diveType=Booking.diveType and
+	        MonitorPricing.diveSite=Booking.siteID
+	    )
+	GROUP BY Booking.id, MonitorPricing.pricing;
+
+DROP VIEW IF EXISTS BookingPricesServices CASCADE;
+CREATE VIEW BookingPricesServices AS
+	SELECT Booking.id as booking,
+	       Booking.siteID as divesite,
+	       SUM(dsServices.price) as price
+	FROM Booking
+	     -- get the extra services' pricing
+	    JOIN BookingService ON (Booking.id=BookingService.bookingID)
+	    JOIN dsServices ON (BookingService.service=dsServices.service and dsServices.sID=Booking.siteID)
+	GROUP BY Booking.id;
+
+DROP VIEW IF EXISTS BookingPricesDivers CASCADE;
+CREATE VIEW BookingPricesDivers AS
+	SELECT Booking.id as booking,
+	       Booking.siteID as divesite,
+	       count(BookingDiver.diver) * DiveSites.diverFee as price
+	FROM Booking
+	    JOIN BookingDiver ON (Booking.id=BookingDiver.booking)
+	    JOIN DiveSites ON (DiveSites.id=Booking.siteID)
+	GROUP BY Booking.id, DiveSites.diverFee;
+
+DROP VIEW IF EXISTS BookingPrices CASCADE;
+CREATE VIEW BookingPrices AS
+	SELECT allPrices.booking as booking,
+	       allPrices.divesite as divesite,
+	       sum(allPrices.price) as price
+	FROM (
+	    (SELECT * FROM BookingPricesDivers)
+	    UNION
+	    (SELECT * FROM BookingPricesServices)
+	    UNION
+	    (SELECT * FROM BookingPricesMonitors)
+	    ) allPrices
+	GROUP BY allPrices.booking, allPrices.divesite;
+
+-- Combining monitors and booking prices
+
+DROP VIEW IF EXISTS monitorBookingPrices CASCADE;
+CREATE VIEW monitorBookingPrices AS
+	select g.mID, avg(b.price), g.email
+	from goodMonitors as g, BookingPrices as b
+	where g.bID = b.booking
+	group by g.mID, g.email;
 
 
 -- Your query that answers the question goes below the "insert into" line:

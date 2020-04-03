@@ -13,6 +13,7 @@
    All monetary values are in cents. We realize this is a suboptimal
    representation.
 */
+/* data.sql */
 
 INSERT INTO DiveSite (id, name, location, diverFee, maxCapacity)
 VALUES
@@ -44,7 +45,7 @@ VALUES
     (4, 'wrist_mounted_computer', 3000);
 
 
--- in our schema, all monitors are divers. 
+-- in our schema, all monitors are divers.
 INSERT INTO Diver (id, name, age, certification, email)
 VALUES
     -- the ages/certification of the monitors are not defined in data.txt
@@ -62,13 +63,13 @@ VALUES
 
 
 INSERT INTO Monitor (dID, maxCapacity)
-VALUES 
+VALUES
     (1, 10),
     (2, 15),
     (3, 15);
 
 INSERT INTO MonitorPricing (mID, diveTime, diveType, diveSite, pricing)
-VALUES 
+VALUES
     (1, 'night', 'cave', 1, 2500),
     (1, 'morning', 'open', 2, 1000),
     (1, 'morning', 'cave', 2, 2000),
@@ -99,25 +100,16 @@ VALUES
     (3, 'cave', 5),
     (3, 'deep', 5);
 
-/* We wouldn't store credit card info like this in real life. */
-INSERT INTO Booking (
-    id, 
-    monitorID,
-    leadID, siteID, 
-    creditCardInfo, 
-    diveTime, 
-    diveType, 
-    bookingDate, 
-    monitorRating
-)
+INSERT INTO Booking (id, monitorID, leadID, siteID, creditCardInfo, diveTime, diveType, bookingDate, monitorRating)
 VALUES
     (1, 1, 4, 2, 'XXXXXX', 'morning', 'open', '2019-07-20', 2),
-    (2, 1, 4, 2, 'XXXXXX', 'morning', 'cave', '2019-07-21', 0),
-    (3, 2, 4, 1, 'XXXXXX', 'morning', 'cave', '2019-07-22', 5),
-    (4, 1, 4, 1, 'XXXXXX', 'night', 'cave', '2019-07-22', NULL),
-    (5, 1, 5, 3, 'XXXXXX', 'afternoon', 'open', '2019-07-22', 1),
-    (6, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-23', 0),
-    (7, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-24', 2);
+    (2, 1, 4, 2, 'XXXXXX', 'morning', 'cave', '2019-07-21', 2),
+    (3, 2, 4, 1, 'XXXXXX', 'morning', 'cave', '2019-07-22', 0),
+    (4, 1, 4, 1, 'XXXXXX', 'night', 'cave', '2019-07-22', 2),
+    (5, 1, 5, 3, 'XXXXXX', 'afternoon', 'open', '2019-07-22', 2),
+    (6, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-23', 2),
+    (7, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-24', 2),
+    (8, 3, 4, 1, 'XXXXXX', 'morning', 'cave', '2019-07-24', 0);
 
 
 INSERT INTO BookingService (bookingID, service)
@@ -125,9 +117,7 @@ VALUES
     (1, 'masks'),
     (1, 'fins');
 
-
-
-/* See the schema for why this is null */
+/* See the schema for an explanation for the nulls */
 INSERT INTO BookingDiver(booking, diver, rating)
 VALUES
     (1, 4, NULL),
@@ -139,7 +129,7 @@ VALUES
     (2, 6, NULL),
     (2, 7, NULL),
     (3, 4, NULL),
-    (3, 7, NULL),    
+    (3, 7, NULL),
     (4, 4, NULL),
     (5, 5, NULL),
     (5, 4, NULL),

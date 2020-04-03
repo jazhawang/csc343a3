@@ -89,11 +89,12 @@ INSERT INTO Booking (id, monitorID, leadID, siteID, creditCardInfo, diveTime, di
 VALUES
     (1, 1, 4, 2, 'XXXXXX', 'morning', 'open', '2019-07-20', 2),
     (2, 1, 4, 2, 'XXXXXX', 'morning', 'cave', '2019-07-21', 2),
-    (3, 2, 4, 1, 'XXXXXX', 'morning', 'cave', '2019-07-22', 5),
-    (4, 1, 4, 1, 'XXXXXX', 'night', 'cave', '2019-07-22', NULL),
-    (5, 1, 5, 3, 'XXXXXX', 'afternoon', 'open', '2019-07-22', 1),
-    (6, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-23', 1),
-    (7, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-24', 2);
+    (3, 2, 4, 1, 'XXXXXX', 'morning', 'cave', '2019-07-22', 0),
+    (4, 1, 4, 1, 'XXXXXX', 'night', 'cave', '2019-07-22', 2),
+    (5, 1, 5, 3, 'XXXXXX', 'afternoon', 'open', '2019-07-22', 2),
+    (6, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-23', 2),
+    (7, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-24', 2),
+    (8, 3, 4, 1, 'XXXXXX', 'morning', 'cave', '2019-07-24', 0);
 
 
 INSERT INTO BookingService (bookingID, service)

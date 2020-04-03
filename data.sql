@@ -85,15 +85,15 @@ VALUES
     (3, 'cave', 5),
     (3, 'deep', 5);
 
-INSERT INTO Booking (id, monitorID, leadID, siteID, creditCardInfo, diveTime, diveType, bookingDate)
+INSERT INTO Booking (id, monitorID, leadID, siteID, creditCardInfo, diveTime, diveType, bookingDate, monitorRating)
 VALUES
-    (1, 1, 4, 2, 'XXXXXX', 'morning', 'open', '2019-07-20'),
-    (2, 1, 4, 2, 'XXXXXX', 'morning', 'cave', '2019-07-21'),
-    (3, 2, 4, 1, 'XXXXXX', 'morning', 'cave', '2019-07-22'),
-    (4, 1, 4, 1, 'XXXXXX', 'night', 'cave', '2019-07-22'),
-    (5, 1, 5, 3, 'XXXXXX', 'afternoon', 'open', '2019-07-22'),
-    (6, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-23'),
-    (7, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-24');
+    (1, 1, 4, 2, 'XXXXXX', 'morning', 'open', '2019-07-20', 2),
+    (2, 1, 4, 2, 'XXXXXX', 'morning', 'cave', '2019-07-21', 0),
+    (3, 2, 4, 1, 'XXXXXX', 'morning', 'cave', '2019-07-22', 5),
+    (4, 1, 4, 1, 'XXXXXX', 'night', 'cave', '2019-07-22', NULL),
+    (5, 1, 5, 3, 'XXXXXX', 'afternoon', 'open', '2019-07-22', 1),
+    (6, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-23', 0),
+    (7, 3, 5, 2, 'XXXXXX', 'morning', 'cave', '2019-07-24', 2);
 
 
 INSERT INTO BookingService (bookingID, service)
@@ -103,23 +103,23 @@ VALUES
 
 INSERT INTO BookingDiver(booking, diver, rating)
 VALUES
-    (1, 4, 2),
+    (1, 4, NULL),
     (1, 5, NULL),
     (1, 6, NULL),
     (1, 7, NULL),
     (1, 8, NULL),
-    (2, 4, 0),
+    (2, 4, NULL),
     (2, 6, NULL),
     (2, 7, NULL),
-    (3, 4, 5),
+    (3, 4, NULL),
     (3, 7, NULL),    
     (4, 4, NULL),
-    (5, 5, 1),
+    (5, 5, NULL),
     (5, 4, NULL),
     (5, 6, NULL),
     (5, 7, NULL),
     (5, 9, NULL),
     (5, 8, NULL),
     (5, 10, NULL),
-    (6, 5, 0),
-    (7, 5, 2);
+    (6, 5, NULL),
+    (7, 5, NULL);

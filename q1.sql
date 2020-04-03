@@ -16,7 +16,7 @@ CREATE TABLE q1 (
 /* The answer to q1. We find all divesites/divetype combos with a 
    valid monitor (qualified and is offering services).  */
 INSERT INTO q1
-SELECT DiveSiteDiveType.diveType as diveType, count(*) AS num 
+SELECT DiveSiteDiveType.diveType as diveType, COUNT(*) AS num 
 FROM DiveSite 
     -- make sure that the divetype is supported at the divesite
     JOIN DiveSiteDiveType ON (DiveSiteDiveType.sID=DiveSite.id)

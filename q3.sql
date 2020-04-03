@@ -27,7 +27,8 @@ SELECT Booking.siteID as divesite,
        Booking.bookingDate as dive_date,
        Booking.divetime as divetime,
        -- plus one for the monitors
-       (cast((sum(Booking.id)+1) as decimal)/DiveSites.maxCapacity) as occupancy_rate       
+       (cast((sum(Booking.id)+1) as decimal)/DiveSites.maxCapacity) 
+           as occupancy_rate       
 FROM Booking JOIN DiveSites ON (Booking.siteID=DiveSites.id)
 GROUP BY Booking.diveTime, 
          Booking.siteID, 
@@ -45,7 +46,8 @@ DROP VIEW IF EXISTS DiveSiteOccupancy CASCADE;
 CREATE VIEW DiveSiteOccupancy AS
 SELECT DiveSiteOccupancyMinimal.divesite as divesite,
        DiveSiteOccupancyMinimal.dive_date as dive_date,
-       sum(DiveSiteOccupancyMinimal.occupancy_rate) / 3.0 as occupancy_rate
+       sum(DiveSiteOccupancyMinimal.occupancy_rate) / 3.0 
+          as occupancy_rate
 FROM DiveSiteOccupancyMinimal
 GROUP BY divesite, dive_date;
 
@@ -146,19 +148,19 @@ GROUP BY BookingPrices.divesite;
 INSERT INTO q3
 SELECT * FROM
 ((
-    SELECT DiveSiteMoreThanHalfFull.divesite as siteID,
+    SELECT hf.divesite as siteID,
            AverageDiveSitePrice.price as price,
            cast('more' as majority) as occupancy
-    FROM DiveSiteMoreThanHalfFull 
+    FROM DiveSiteMoreThanHalfFull as hf
         LEFT OUTER JOIN AverageDiveSitePrice ON (
-            DiveSiteMoreThanHalfFull.divesite=AverageDiveSitePrice.divesite
+            hf.divesite=AverageDiveSitePrice.divesite
         )
 ) UNION (
-    SELECT DiveSiteLessThanHalfFull.divesite as siteID,
+    SELECT lf.divesite as siteID,
            AverageDiveSitePrice.price as price,
            cast('less' as majority) as occupancy
-    FROM DiveSiteLessThanHalfFull 
+    FROM DiveSiteLessThanHalfFull as lf
         LEFT OUTER JOIN AverageDiveSitePrice ON (
-            DiveSiteLessThanHalfFull.divesite=AverageDiveSitePrice.divesite
+            lf.divesite=AverageDiveSitePrice.divesite
         )
 )) t;

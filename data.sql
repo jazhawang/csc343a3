@@ -100,7 +100,16 @@ VALUES
     (3, 'deep', 5);
 
 /* We wouldn't store credit card info like this in real life. */
-INSERT INTO Booking (id, monitorID, leadID, siteID, creditCardInfo, diveTime, diveType, bookingDate, monitorRating)
+INSERT INTO Booking (
+    id, 
+    monitorID,
+    leadID, siteID, 
+    creditCardInfo, 
+    diveTime, 
+    diveType, 
+    bookingDate, 
+    monitorRating
+)
 VALUES
     (1, 1, 4, 2, 'XXXXXX', 'morning', 'open', '2019-07-20', 2),
     (2, 1, 4, 2, 'XXXXXX', 'morning', 'cave', '2019-07-21', 0),

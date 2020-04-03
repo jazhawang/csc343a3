@@ -34,7 +34,7 @@ CREATE VIEW avgsRatings AS
 
 DROP VIEW IF EXISTS monitorAllLocations CASCADE;
 CREATE VIEW monitorAllLocations AS
-	select monitorID, diveSite
+	select mID, diveSite
 	from MonitorPricing;
 
 -- Combine the average ratings of each monitor with the locations
@@ -45,14 +45,14 @@ CREATE VIEW monitorSiteRatings AS
 	select m.monitorID as mID, m.avgRating as avgMonitorRating,
 		s.avgRating as avgSiteRating
 	from avgmRatings as m, avgsRatings as s, monitorAllLocations as a
-	where m.monitorID = a.monitorID and a.diveSite = s.siteID;
+	where m.monitorID = a.mID and a.diveSite = s.siteID;
 
 -- Filter out the monitors that have at least a lower average rating than a
 -- specific location
 
 DROP VIEW IF EXISTS badMonitors CASCADE;
 CREATE VIEW badMonitors AS
-	select distinct m.monitorID
+	select distinct m.mID
 	from monitorSiteRatings as m
 	where m.avgMonitorRating < m.avgSiteRating;
 
@@ -60,9 +60,9 @@ CREATE VIEW badMonitors AS
 
 DROP VIEW IF EXISTS goodMonitors CASCADE;
 CREATE VIEW goodMonitors AS
-	select distinct m.monitorID as mID, b.id as bID, d.email as email
+	select distinct m.mID as mID, b.id as bID, d.email as email
 	from monitorSiteRatings as m, Booking as b, Diver as d
-	where NOT EXISTS badMonitors and b.monitorID = m.id and m.id = d.id;
+	where NOT EXISTS (select * from badMonitors) and b.monitorID = m.id and m.mID = d.id;
 
 -- Computing booking prices for each booking
 

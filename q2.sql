@@ -34,7 +34,7 @@ CREATE VIEW avgsRatings AS
 
 DROP VIEW IF EXISTS monitorAllLocations CASCADE;
 CREATE VIEW monitorAllLocations AS
-	select monitorID, diveSite
+	select mID, diveSite
 	from MonitorPricing;
 
 -- Combine the average ratings of each monitor with the locations

@@ -60,9 +60,9 @@ CREATE VIEW badMonitors AS
 
 DROP VIEW IF EXISTS goodMonitors CASCADE;
 CREATE VIEW goodMonitors AS
-	select distinct m.monitorID as mID, b.id as bID, d.email as email
+	select distinct m.mID as mID, b.id as bID, d.email as email
 	from monitorSiteRatings as m, Booking as b, Diver as d
-	where NOT EXISTS (select * from badMonitors) and b.monitorID = m.id and m.id = d.id;
+	where NOT EXISTS (select * from badMonitors) and b.monitorID = m.id and m.mID = d.id;
 
 -- Computing booking prices for each booking
 

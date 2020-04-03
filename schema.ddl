@@ -1,5 +1,5 @@
 
-/* Schema for CSC343 A3 
+/* Schema for CSC343 A3
 
   All monetary values are in cents.
 */
@@ -12,16 +12,16 @@ CREATE TYPE certification AS ENUM ('NAUI', 'CMAS', 'PADI', 'NA');
 CREATE TYPE diveType AS ENUM('open', 'cave', 'deep');
 CREATE TYPE diveTime AS ENUM('morning', 'afternoon', 'night');
 CREATE TYPE service AS ENUM(
-  'video', 
-  'snacks', 
-  'hot_showers', 
-  'towel_service', 
+  'video',
+  'snacks',
+  'hot_showers',
+  'towel_service',
   'masks',
   'regulators',
   'fins',
   'wrist_mounted_computer'
   );
-/* 
+/*
 DROP TABLE IF EXISTS Diver CASCADE;
 DROP TABLE IF EXISTS DiveSites CASCADE;
 DROP TABLE IF EXISTS Monitor CASCADE;
@@ -69,7 +69,7 @@ CREATE Table Monitor(
 
 /*
   The pricing for each Monitor depending on certain conditions.
-	From handout, we know that the pricing depends time of day, 
+	From handout, we know that the pricing depends time of day,
   divetype, divesite, and monitor.
 */
 CREATE Table MonitorPricing(
@@ -92,7 +92,7 @@ CREATE Table MonitorCapacity(
   PRIMARY KEY (mID, diveType)
 );
 
-/* 
+/*
   Monitor mID has booking privilege for divesite siteID.
 */
 CREATE Table MonitorPrivilege(
@@ -124,8 +124,8 @@ CREATE Table dsDiveTypes(
 
 /*
   Represents the base Booking information. This is a pretty big table,
-  but everything here only functionally depends on the booking id and 
-  does not have many duplicated, so we included a lot of information 
+  but everything here only functionally depends on the booking id and
+  does not have many duplicated, so we included a lot of information
   in this table.
 */
 CREATE Table Booking(
@@ -140,11 +140,12 @@ CREATE Table Booking(
   -- info about the dive type and time/date
   diveTime diveTime NOT NULL,
   diveType diveType NOT NULL,
-  bookingDate DATE NOT NULL
+  bookingDate DATE NOT NULL,
+	monitorRating INT
 );
 
-/* 
-  Represents if Booking bookingID has requested a certain optional 
+/*
+  Represents if Booking bookingID has requested a certain optional
   service.
 */
 CREATE Table BookingService(
@@ -158,5 +159,5 @@ CREATE Table BookingDiver(
   booking INT NOT NULL REFERENCES Booking,
   diver INT NOT NULL REFERENCES Diver,
   -- optional rating given by the diver. Can be null. We didn't want to make a table just for this.
-  rating INT 
+  rating INT
 );

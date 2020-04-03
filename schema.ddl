@@ -135,8 +135,7 @@ CREATE Table Booking(
   leadID INT NOT NULL REFERENCES Diver,
   siteID INT NOT NULL REFERENCES DiveSites,
   -- we won't store credit card info like this irl.
-  creditCardInfo VARCHAR(100) NOT NULL,
-  --emailAddress VARCHAR(100) NOT NULL, -- TODO: do we need this? The leadID should be a diver with an email.
+  creditCardInfo VARCHAR(100) NOT NULL,  
   -- info about the dive type and time/date
   diveTime diveTime NOT NULL,
   diveType diveType NOT NULL,
@@ -158,6 +157,7 @@ CREATE Table BookingService(
 CREATE Table BookingDiver(
   booking INT NOT NULL REFERENCES Booking,
   diver INT NOT NULL REFERENCES Diver,
-  -- optional rating given by the diver. Can be null. We didn't want to make a table just for this.
+  -- optional rating given by the diver. 
+  -- Can be null. We didn't want to make a table just for this.
   rating INT
 );

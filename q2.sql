@@ -34,7 +34,7 @@ CREATE VIEW avgsRatings AS
 
 DROP VIEW IF EXISTS monitorAllLocations CASCADE;
 CREATE VIEW monitorAllLocations AS
-	select mID, diveSite
+	select distinct mID, diveSite
 	from MonitorPricing;
 
 -- Combine the average ratings of each monitor with the locations
@@ -62,7 +62,7 @@ DROP VIEW IF EXISTS goodMonitors CASCADE;
 CREATE VIEW goodMonitors AS
 	select distinct m.mID as mID, b.id as bID, d.email as email
 	from monitorSiteRatings as m, Booking as b, Diver as d
-	where NOT EXISTS (select * from badMonitors) and b.monitorID = m.id and m.mID = d.id;
+	where NOT EXISTS (select * from badMonitors) and b.monitorID = m.mID and m.mID = d.id;
 
 -- Computing booking prices for each booking
 
@@ -129,7 +129,7 @@ CREATE VIEW monitorBookingPrices AS
 -- Your query that answers the question goes below the "insert into" line:
 INSERT INTO q2
 select *
-from maxRatingMonitorPrice;
+from monitorBookingPrices;
 
 select *
 from q2;

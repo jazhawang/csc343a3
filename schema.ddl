@@ -153,7 +153,8 @@ CREATE Table BookingService(
     PRIMARY KEY (bookingID, service)
 );
 
-/* All the divers that are in a Dive */
+/* All the divers that are in a dive (booking), along with their rating
+   for the site. */
 CREATE Table BookingDiver(
   booking INT NOT NULL REFERENCES Booking,
   diver INT NOT NULL REFERENCES Diver,

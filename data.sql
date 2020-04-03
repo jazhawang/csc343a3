@@ -125,6 +125,9 @@ VALUES
     (1, 'masks'),
     (1, 'fins');
 
+
+
+/* See the schema for why this is null */
 INSERT INTO BookingDiver(booking, diver, rating)
 VALUES
     (1, 4, NULL),

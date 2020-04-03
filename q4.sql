@@ -36,10 +36,13 @@ SELECT Booking.id as booking,
        Booking.siteID as divesite,
        count(BookingDiver.diver) * DiveSite.diverFee as price
 FROM Booking
+	-- get the dive site per divers fees
     JOIN BookingDiver ON (Booking.id=BookingDiver.booking)
     JOIN DiveSite ON (DiveSite.id=Booking.siteID)
 GROUP BY Booking.id, DiveSite.diverFee;
 
+
+/* Get the total booking prices. For an explanation go to q3.sql */
 DROP VIEW IF EXISTS BookingPrices CASCADE;
 CREATE VIEW BookingPrices AS
 SELECT allPrices.booking as booking,
@@ -63,7 +66,6 @@ CREATE TABLE q4 (
 		average INT 
 );
 
-
 /* get the min,max, and avg booking price for every divesite
    we need to left outer join with DiveSite because some divesites 
    may not have any bookings. In that case the max,min, and avg are NULL. */
@@ -72,5 +74,6 @@ SELECT DiveSite.id as diveSite,
 	   max(price) as highest,
 	   min(price) as lowest,
 	   avg(price) as average
-FROM DiveSite LEFT OUTER JOIN BookingPrices ON (DiveSite.id=BookingPrices.divesite)
+FROM DiveSite 
+	LEFT OUTER JOIN BookingPrices ON (DiveSite.id=BookingPrices.divesite)
 GROUP BY DiveSite.id;

@@ -110,7 +110,7 @@ DROP VIEW IF EXISTS BookingPricesDivers CASCADE;
 CREATE VIEW BookingPricesDivers AS
 SELECT Booking.id as booking,
        Booking.siteID as divesite,
-       count(BookingDiver.diver) * DiveSite.diverFee as price
+       COUNT(BookingDiver.diver) * DiveSite.diverFee as price
 FROM Booking
     JOIN BookingDiver ON (Booking.id=BookingDiver.booking)
     JOIN DiveSite ON (DiveSite.id=Booking.siteID)
@@ -122,7 +122,7 @@ DROP VIEW IF EXISTS BookingPrices CASCADE;
 CREATE VIEW BookingPrices AS
 SELECT allPrices.booking as booking,
        allPrices.divesite as divesite,
-       sum(allPrices.price) as price
+       SUM(allPrices.price) as price
 FROM (
     (SELECT * FROM BookingPricesDivers)
     UNION 
@@ -138,7 +138,7 @@ GROUP BY allPrices.booking, allPrices.divesite;
 DROP VIEW IF EXISTS AverageDiveSitePrice CASCADE;
 CREATE VIEW AverageDiveSitePrice AS
 SELECT divesite as divesite,
-       avg(price) as price
+       AVG(price) as price
 FROM BookingPrices
 GROUP BY BookingPrices.divesite;
 
@@ -150,7 +150,7 @@ SELECT * FROM
 ((
     SELECT hf.divesite as siteID,
            AverageDiveSitePrice.price as price,
-           cast('more' as majority) as occupancy
+           CAST('more' as majority) as occupancy
     FROM DiveSiteMoreThanHalfFull as hf
         LEFT OUTER JOIN AverageDiveSitePrice ON (
             hf.divesite=AverageDiveSitePrice.divesite
@@ -158,7 +158,7 @@ SELECT * FROM
 ) UNION (
     SELECT lf.divesite as siteID,
            AverageDiveSitePrice.price as price,
-           cast('less' as majority) as occupancy
+           CAST('less' as majority) as occupancy
     FROM DiveSiteLessThanHalfFull as lf
         LEFT OUTER JOIN AverageDiveSitePrice ON (
             lf.divesite=AverageDiveSitePrice.divesite

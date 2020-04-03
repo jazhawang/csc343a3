@@ -34,7 +34,7 @@ DROP VIEW IF EXISTS BookingPricesDivers CASCADE;
 CREATE VIEW BookingPricesDivers AS
 SELECT Booking.id as booking,
        Booking.siteID as divesite,
-       count(BookingDiver.diver) * DiveSite.diverFee as price
+       COUNT(BookingDiver.diver) * DiveSite.diverFee as price
 FROM Booking
 	-- get the dive site per divers fees
     JOIN BookingDiver ON (Booking.id=BookingDiver.booking)
@@ -47,7 +47,7 @@ DROP VIEW IF EXISTS BookingPrices CASCADE;
 CREATE VIEW BookingPrices AS
 SELECT allPrices.booking as booking,
        allPrices.divesite as divesite,
-       sum(allPrices.price) as price
+       SUM(allPrices.price) as price
 FROM (
     (SELECT * FROM BookingPricesDivers)
     UNION 
@@ -71,9 +71,9 @@ CREATE TABLE q4 (
    may not have any bookings. In that case the max,min, and avg are NULL. */
 INSERT INTO q4
 SELECT DiveSite.id as diveSite, 
-	   max(price) as highest,
-	   min(price) as lowest,
-	   avg(price) as average
+	   MAX(price) as highest,
+	   MIN(price) as lowest,
+	   AVG(price) as average
 FROM DiveSite 
 	LEFT OUTER JOIN BookingPrices ON (DiveSite.id=BookingPrices.divesite)
 GROUP BY DiveSite.id;

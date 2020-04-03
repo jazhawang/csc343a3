@@ -1,5 +1,7 @@
 
 /* 
+    q3.sql 
+
     Find the average fee charged per dive (including extra charges) 
     for dive sites that are more than half full on average, 
     and for those that are half full or less on average. Consider 
@@ -8,17 +10,26 @@
     at a site at a morning, afternoon, or night dive opportunity. 
 */
 
-DROP VIEW IF EXISTS DiveSiteOccupancy CASCADE;
-CREATE VIEW DiveSiteOccupancy AS
+DROP VIEW IF EXISTS DiveSiteOccupancyMinimal CASCADE;
+CREATE VIEW DiveSiteOccupancyMinimal AS
 SELECT Booking.siteID as divesite,
        Booking.bookingDate as dive_date,
-       Booking.diveType as divetype,
-       (sum(Booking.id)/dsDiveTypes.capacity) as occupancy_rate
-FROM Booking JOIN dsDiveTypes ON (
-    Booking.siteID=dsDiveTypes.sID and 
-    Booking.diveType=dsDiveTypes.diveType
-    )
-GROUP BY Booking.diveType, Booking.siteID, Booking.bookingDate, dsDiveTypes.capacity;
+       Booking.divetime as divetime,
+       -- plus one for the monitors
+       (cast((sum(Booking.id)+1) as decimal)/DiveSites.maxCapacity) as occupancy_rate       
+FROM Booking JOIN DiveSites ON (Booking.siteID=DiveSites.id)
+GROUP BY Booking.diveTime, 
+         Booking.siteID, 
+         Booking.bookingDate,
+         DiveSites.id;
+
+DROP VIEW IF EXISTS DiveSiteOccupancy CASCADE;
+CREATE VIEW DiveSiteOccupancy AS
+SELECT DiveSiteOccupancyMinimal.divesite as divesite,
+       DiveSiteOccupancyMinimal.dive_date as dive_date,
+       sum(DiveSiteOccupancyMinimal.occupancy_rate) / 3.0 as occupancy_rate
+FROM DiveSiteOccupancyMinimal
+GROUP BY divesite, dive_date;
 
 DROP VIEW IF EXISTS DiveSiteMoreThanHalfFull CASCADE;
 CREATE VIEW DiveSiteMoreThanHalfFull AS
@@ -56,7 +67,10 @@ SELECT Booking.id as booking,
 FROM Booking 
      -- get the extra services' pricing
     JOIN BookingService ON (Booking.id=BookingService.bookingID)
-    JOIN dsServices ON (BookingService.service=dsServices.service and dsServices.sID=Booking.siteID)
+    JOIN dsServices ON (
+        BookingService.service=dsServices.service and
+        dsServices.sID=Booking.siteID
+        )
 GROUP BY Booking.id;
 
 DROP VIEW IF EXISTS BookingPricesDivers CASCADE;
@@ -100,7 +114,7 @@ SELECT * FROM
            AverageDiveSitePrice.price as price,
            'more' as occupancy
     FROM DiveSiteMoreThanHalfFull 
-        JOIN AverageDiveSitePrice ON (
+        LEFT OUTER JOIN AverageDiveSitePrice ON (
             DiveSiteMoreThanHalfFull.divesite=AverageDiveSitePrice.divesite
         )
 ) AS t UNION (
@@ -108,7 +122,7 @@ SELECT * FROM
            AverageDiveSitePrice.price as price,
            'less' as occupancy
     FROM DiveSiteLessThanHalfFull 
-        JOIN AverageDiveSitePrice ON (
+        LEFT OUTER JOIN AverageDiveSitePrice ON (
             DiveSiteLessThanHalfFull.divesite=AverageDiveSitePrice.divesite
         )
 );
